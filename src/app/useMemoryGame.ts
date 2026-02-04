@@ -30,21 +30,24 @@ export function useMemoryGame(labels: string[]) {
   const [flipped, setFlipped] = useState<number[]>([]);
 
   function flipCard(id: number) {
-    if (flipped.length === 2 || cards[id].isFaceUp || cards[id].isMatched) return;
+    const cardIdx = cards.findIndex(card => card.id === id);
+    if (flipped.length === 2 || cards[cardIdx].isFaceUp || cards[cardIdx].isMatched) return;
     const newCards = cards.map((card, idx) =>
-      idx === id ? { ...card, isFaceUp: true } : card
+      idx === cardIdx ? { ...card, isFaceUp: true } : card
     );
     const newFlipped = [...flipped, id];
     setCards(newCards);
     setFlipped(newFlipped);
 
     if (newFlipped.length === 2) {
-      const [first, second] = newFlipped;
-      if (newCards[first].label === newCards[second].label) {
+      const [firstId, secondId] = newFlipped;
+      const firstIdx = newCards.findIndex(card => card.id === firstId);
+      const secondIdx = newCards.findIndex(card => card.id === secondId);
+      if (newCards[firstIdx].label === newCards[secondIdx].label) {
         setTimeout(() => {
           setCards(cards => cards.map((card, idx) =>
-            (idx === first || idx === second)
-              ? { ...card, isMatched: true }
+            (card.id === firstId || card.id === secondId)
+              ? { ...card, isMatched: true, isFaceUp: true }
               : card
           ));
           setFlipped([]);
@@ -52,7 +55,7 @@ export function useMemoryGame(labels: string[]) {
       } else {
         setTimeout(() => {
           setCards(cards => cards.map((card, idx) =>
-            (idx === first || idx === second)
+            (card.id === firstId || card.id === secondId)
               ? { ...card, isFaceUp: false }
               : card
           ));
