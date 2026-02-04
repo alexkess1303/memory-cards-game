@@ -1,17 +1,11 @@
-
-
 import React from 'react';
 import style from './Card.module.scss';
 import cardBack from '../../../assets/card-back.png';
-
-export type CardData = {
-  isFaceUp: boolean;
-  label: string;
-};
+import { MemoryCard } from '../../domain/MemoryCard';
 
 type CardProps = {
   id: number;
-  cardData: CardData;
+  cardData: MemoryCard;
   onClick: () => void;
 };
 

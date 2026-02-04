@@ -2,7 +2,7 @@
 import React, { useState } from 'react';
 import style from './GameBoard.module.scss';
 import Card from '../Card/Card';
-import { CardData } from '../Card/Card';
+import { MemoryCard } from '../../domain/MemoryCard';
 
 
 
@@ -10,7 +10,7 @@ const rows = 3;
 const cols = 4;
 const totalCards = rows * cols;
 
-function buildInitialCardsCollection(): CardData[] {
+function buildInitialCardsCollection(): MemoryCard[] {
   // For demo, label is just the card index as string
   return Array.from({ length: totalCards }, (_, i) => ({
     isFaceUp: false,
@@ -20,7 +20,7 @@ function buildInitialCardsCollection(): CardData[] {
 
 export default function GameBoard() {
   // State: array of CardState
-  const [cards, setCards] = useState<CardData[]>(buildInitialCardsCollection());
+  const [cards, setCards] = useState<MemoryCard[]>(buildInitialCardsCollection());
 
   const handleCardClick = (id: number) => {
     setCards((prev) => {
