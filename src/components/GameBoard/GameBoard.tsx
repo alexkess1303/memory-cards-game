@@ -1,58 +1,51 @@
 
-import React, { useState } from 'react';
+import React from 'react';
 import style from './GameBoard.module.scss';
 import Card from '../Card/Card';
 import { MemoryCard } from '../../domain/MemoryCard';
+import { useMemoryGame } from '../../app/useMemoryGame';
 
 
 
 const rows = 3;
 const cols = 4;
 const totalCards = rows * cols;
-
-function buildInitialCardsCollection(): MemoryCard[] {
-  // For demo, label is just the card index as string
-  return Array.from({ length: totalCards }, (_, i) => ({
-    isFaceUp: false,
-    label: String(i + 1),
-  }));
-}
+// Build 6 pairs (12 cards) with labels A-F
+const labels = Array.from({ length: totalCards / 2 }, (_, i) => String.fromCharCode(65 + i));
 
 export default function GameBoard() {
-  // State: array of CardState
-  const [cards, setCards] = useState<MemoryCard[]>(buildInitialCardsCollection());
+  const { cards, flipCard, resetGame } = useMemoryGame(labels);
 
-  const handleCardClick = (id: number) => {
-    setCards((prev) => {
-      const next = [...prev];
-      next[id] = { ...next[id], isFaceUp: !next[id].isFaceUp };
-      return next;
+  const setAllFaceUp = () => {
+    // Not part of useMemoryGame, so just for demo, flip all cards up
+    cards.forEach(card => {
+      if (!card.isFaceUp && !card.isMatched) flipCard(card.id);
     });
   };
 
-  const setAllFaceUp = () => {
-    setCards((prev) => prev.map(card => ({ ...card, isFaceUp: true })));
-  };
-
   const setAllFaceDown = () => {
-    setCards((prev) => prev.map(card => ({ ...card, isFaceUp: false })));
+    // Not part of useMemoryGame, so just for demo, flip all cards down (not matched)
+    cards.forEach(card => {
+      if (card.isFaceUp && !card.isMatched) flipCard(card.id);
+    });
   };
 
   return (
     <>
       <div className={style.gameBoard}>
-        {cards.map((card, id) => (
+        {cards.map((card) => (
           <Card
-            key={id}
-            id={id}
+            key={card.id}
+            id={card.id}
             cardData={card}
-            onClick={() => handleCardClick(id)}
+            onClick={() => flipCard(card.id)}
           />
         ))}
       </div>
       <div className={style.gameBoardButtons}>
-        <button className={style.MuiButton} onClick={setAllFaceUp}>All Up</button>
-        <button className={style.MuiButton} onClick={setAllFaceDown}>All Down</button>
+        {/* <button className={style.MuiButton} onClick={setAllFaceUp}>All Up</button>
+        <button className={style.MuiButton} onClick={setAllFaceDown}>All Down</button> */}
+        <button className={style.MuiButton} onClick={resetGame}>New Game</button>
       </div>
     </>
   );
